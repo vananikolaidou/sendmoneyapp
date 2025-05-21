@@ -1,39 +1,33 @@
-// components/InputField.tsx
+// InputField.js
 import React from 'react';
+import { TextInput, StyleSheet } from 'react-native';
 import { Controller } from 'react-hook-form';
-import { TextInput, View, Text } from 'react-native';
 
-const InputField = ({
-  name,
-  control,
-  placeholder,
-  keyboardType = 'default',
-  inputMode,
-  parseValue = (val) => val,
-}) => (
-  <Controller
-    control={control}
-    name={name}
-    render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-      <View style={{ marginBottom: 12 }}>
+const InputField = ({ name, control, placeholder, style, placeholderTextColor }) => {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field: { onChange, onBlur, value } }) => (
         <TextInput
-          placeholder={placeholder}
-          value={String(value)}
-          onChangeText={(text) => onChange(parseValue(text))}
+          style={[styles.input, style]}
           onBlur={onBlur}
-          keyboardType={keyboardType}
-          inputMode={inputMode}
-          style={{
-            borderColor: '#ccc',
-            borderWidth: 1,
-            padding: 10,
-            borderRadius: 6,
-          }}
+          onChangeText={onChange}
+          value={value}
+          placeholder={placeholder}
+          placeholderTextColor={placeholderTextColor}
         />
-        {error && <Text style={{ color: 'red' }}>{error.message}</Text>}
-      </View>
-    )}
-  />
-);
+      )}
+    />
+  );
+};
+
+const styles = StyleSheet.create({
+  input: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+});
 
 export default InputField;

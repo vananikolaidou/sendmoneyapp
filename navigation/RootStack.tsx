@@ -7,8 +7,10 @@ import ConfirmScreen from '../src/screens/ConfirmScreen';
 import SuccessScreen from '../src/screens/SuccessScreen';
 import { BalanceProvider } from '../context/BalanceContext';
 import LoginScreen from '../src/screens/LoginScreen';
+import RegisterScreen from '../src/screens/RegisterScreen';
 
 export type RootStackParamList = {
+  Register: undefined;
   Login: undefined;
   Home: undefined;
   SendMoney: undefined;
@@ -29,7 +31,8 @@ const App = () => {
     <BalanceProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
-          {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
+          {/* <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} /> */}
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="SendMoney" component={SendMoneyScreen} />
           <Stack.Screen name="Confirm" component={ConfirmScreen} />

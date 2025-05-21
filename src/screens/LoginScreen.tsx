@@ -1,48 +1,89 @@
-// screens/LoginScreen.tsx
-import React from 'react';
-import { View, Text, Button, Alert } from 'react-native';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import InputField from '../../components/InputField';
-
-const loginSchema = z.object({
-  email: z.string().email({ message: 'Invalid email' }),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-});
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from 'react-native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase/firebaseConfig'; // Adjust path as needed
 
 const LoginScreen = ({ navigation }) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const onSubmit = async (data) => {
-    if (data.email === 'test@example.com' && data.password === 'password') {
-      navigation.replace('Home');
-    } else {
-      Alert.alert('Login Failed', 'Incorrect email or password');
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigation.replace('Home'); // Redirect to home screen after login
+    } catch (error) {
+      Alert.alert('Login Failed', error.message);
     }
   };
 
   return (
-    <View style={{ padding: 20 }}>
-      <InputField name="email" control={control} placeholder="Email" keyboardType="email-address" />
-      <InputField name="password" control={control} placeholder="Password" secureTextEntry />
+    <View style={styles.container}>
+      <Text style={styles.title}>Login</Text>
 
-      {errors.email && <Text style={{ color: 'red' }}>{errors.email.message}</Text>}
-      {errors.password && <Text style={{ color: 'red' }}>{errors.password.message}</Text>}
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        onChangeText={setEmail}
+        value={email}
+        autoCapitalize="none"
+        keyboardType="email-address"
+      />
 
-      <Button title="Login" onPress={handleSubmit(onSubmit)} />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        onChangeText={setPassword}
+        value={password}
+        secureTextEntry
+      />
+
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Log In</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 export default LoginScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 24,
+    backgroundColor: '#f2f4f8',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  input: {
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginBottom: 16,
+    backgroundColor: '#fff',
+  },
+  button: {
+    backgroundColor: '#4f46e5',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+});
