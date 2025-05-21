@@ -7,7 +7,7 @@ const AmountSlider = ({ value, onChange, max = 1000, isDark = false }) => {
 
   return (
     <View>
-      <Text style={styles.label}>Amount: ${value}</Text>
+      <Text style={styles.label}>Amount: €{value}</Text>
       <Slider
         minimumValue={0}
         maximumValue={max}
