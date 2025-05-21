@@ -1,12 +1,19 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-const BalanceContext = createContext(null);
+type BalanceProviderProps = {
+  children: ReactNode;
+};
 
-export const BalanceProvider = ({ children }) => {
-  const [balance, setBalance] = useState(1000);
+const BalanceContext = createContext({
+  balance: 0,
+  deductBalance: (amount: number) => { },
+});
+
+export const BalanceProvider = ({ children }: BalanceProviderProps) => {
+  const [balance, setBalance] = useState(10000); 
 
   const deductBalance = (amount: number) => {
-    setBalance(prev => prev - amount);
+    setBalance((prev) => Math.max(prev - amount, 0)); 
   };
 
   return (

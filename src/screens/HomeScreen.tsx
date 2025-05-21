@@ -8,9 +8,11 @@ import {
   Switch,
 } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
+import { useBalance } from '../../context/BalanceContext';
 
 const HomeScreen = ({ navigation }) => {
   const { isDark, toggleTheme } = useTheme();
+  const { balance } = useBalance();
   const styles = getStyles(isDark);
 
   return (
@@ -21,7 +23,7 @@ const HomeScreen = ({ navigation }) => {
 
         <View style={styles.balanceCard}>
           <Text style={styles.cardLabel}>Your Balance</Text>
-          <Text style={styles.cardAmount}>$5,000.00</Text>
+          <Text style={styles.cardAmount}>€{balance.toFixed(2)}</Text>
         </View>
 
         <TouchableOpacity
