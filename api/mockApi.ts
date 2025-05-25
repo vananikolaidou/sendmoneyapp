@@ -1,7 +1,15 @@
-export const sendMoney = async (recipient: string, amount: number) => {
-  return new Promise(resolve => {
+export type SendMoneyResult = {
+  success: boolean;
+  message: string;
+};
+
+export const sendMoney = async (
+  recipient: string,
+  amount: number
+): Promise<SendMoneyResult> => {
+  return new Promise<SendMoneyResult>((resolve) => {
     setTimeout(() => {
-      const success = Math.random() > 0.2;
+      const success = Math.random() >= 0.5;
       resolve({
         success,
         message: success ? 'Transfer complete!' : 'Transfer failed. Try again.',

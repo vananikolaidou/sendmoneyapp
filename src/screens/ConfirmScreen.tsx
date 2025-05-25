@@ -7,7 +7,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { sendMoney } from '../../api/mockApi';
+import { sendMoney, SendMoneyResult } from '../../api/mockApi';
 import { useBalance } from '../../context/BalanceContext';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -21,7 +21,7 @@ const ConfirmScreen = () => {
   const styles = getStyles(isDark);
 
   const handleSend = async () => {
-    const result = await sendMoney(recipient, amount);
+    const result: SendMoneyResult = await sendMoney(recipient, amount);
     if (result.success) {
       deductBalance(amount);
     }
@@ -32,14 +32,17 @@ const ConfirmScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Confirm Transfer</Text>
-      <View style={styles.card}>
+    <View style={styles.container} accessible={true}
+      accessibilityLabel="Confirm Transfer Screen"
+      accessibilityHint="Review the transfer details and confirm to send money">
+      <Text style={styles.title} accessibilityRole="header"
+        accessibilityLabel="Confirm Transfer">Confirm Transfer</Text>
+      <View style={styles.card} accessibilityRole="summary"
+        accessibilityLabel="Transfer details">
         <Text style={styles.label}>Recipient:</Text>
-        <Text style={styles.value}>{recipient}</Text>
-
+        <Text style={styles.value} accessibilityLabel={`Recipient account or phone number: ${recipient}`}>{recipient}</Text>
         <Text style={styles.label}>Amount:</Text>
-        <Text style={styles.value}>${amount}</Text>
+        <Text style={styles.value} accessibilityLabel={`Amount to send: €${amount}`}>€{amount}</Text>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -47,6 +50,7 @@ const ConfirmScreen = () => {
           title="Confirm & Send"
           onPress={handleSend}
           color={isDark ? '#4f46e5' : '#4f46e5'}
+          accessibilityLabel="Confirm and send money"
         />
       </View>
     </View>
@@ -55,7 +59,7 @@ const ConfirmScreen = () => {
 
 export default ConfirmScreen;
 
-const getStyles = (isDark) =>
+const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,

@@ -5,6 +5,7 @@ import {
   Button,
   StyleSheet,
   useColorScheme,
+  AccessibilityInfo,
 } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -14,16 +15,27 @@ const SuccessScreen = ({ route, navigation }) => {
   const { isDark } = useTheme();
   const styles = getStyles(isDark);
 
+  React.useEffect(() => {
+    const announcement = success ? 'Transaction succeeded' : 'Transaction failed';
+    AccessibilityInfo.announceForAccessibility(announcement);
+  }, [success]);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.status}>{success ? '✅ Success' : '❌ Failed'}</Text>
-      <Text style={styles.message}>{message}</Text>
+    <View style={styles.container} accessible={true}
+      accessibilityLabel="Transaction result screen"
+      accessibilityHint="Shows whether your transaction succeeded or failed">
+      <Text style={styles.status} accessibilityRole="header"
+        accessibilityLiveRegion="polite"
+        accessibilityLabel={success ? 'Success' : 'Failed'}>{success ? '✅ Success' : '❌ Failed'}</Text>
+      <Text style={styles.message} accessibilityLabel={`Message: ${message}`}
+        accessibilityLiveRegion="polite">{message}</Text>
 
       <View style={styles.buttonContainer}>
         <Button
           title="Back to Home"
           onPress={() => navigation.popToTop()}
           color={isDark ? '#4f46e5' : '#4f46e5'}
+          accessibilityLabel="Back to Home button"
         />
       </View>
     </View>
@@ -32,7 +44,7 @@ const SuccessScreen = ({ route, navigation }) => {
 
 export default SuccessScreen;
 
-const getStyles = (isDark) =>
+const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,

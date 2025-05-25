@@ -18,8 +18,8 @@ const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Send money safely and easily</Text>
+        <Text style={styles.title} accessibilityRole="header">Welcome Back</Text>
+        <Text style={styles.subtitle} accessibilityRole="header">Send money safely and easily</Text>
 
         <View style={styles.balanceCard}>
           <Text style={styles.cardLabel}>Your Balance</Text>
@@ -29,10 +29,14 @@ const HomeScreen = ({ navigation }) => {
         <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate('SendMoney')}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Send Money"
+          accessibilityHint="Navigates to send money screen"
         >
           <Text style={styles.buttonText}>Send Money</Text>
         </TouchableOpacity>
-       <View style={styles.toggleContainer}>
+        <View style={styles.toggleContainer}>
           <Text style={styles.toggleLabel}>{isDark ? '🌙 Dark Mode' : '☀️ Light Mode'}</Text>
           <Switch
             trackColor={{ false: '#767577', true: '#81b0ff' }}
@@ -40,6 +44,11 @@ const HomeScreen = ({ navigation }) => {
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleTheme}
             value={isDark}
+            accessible={true}
+            accessibilityRole="switch"
+            accessibilityLabel="Toggle theme"
+            accessibilityHint="Switch between light and dark mode"
+            accessibilityState={{ checked: isDark }}
           />
         </View>
       </View>
@@ -49,7 +58,7 @@ const HomeScreen = ({ navigation }) => {
 
 export default HomeScreen;
 
-const getStyles = (isDark) =>
+const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
