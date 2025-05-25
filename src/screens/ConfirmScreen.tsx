@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   Button,
   StyleSheet,
   useColorScheme,
+  TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { sendMoney, SendMoneyResult } from '../../api/mockApi';
@@ -19,16 +21,22 @@ const ConfirmScreen = () => {
   const colorScheme = useColorScheme();
   const { isDark } = useTheme();
   const styles = getStyles(isDark);
+  const [loading, setLoading] = useState(false);
 
   const handleSend = async () => {
-    const result: SendMoneyResult = await sendMoney(recipient, amount);
-    if (result.success) {
-      deductBalance(amount);
+    setLoading(true);
+    try {
+      const result: SendMoneyResult = await sendMoney(recipient, amount);
+      if (result.success) {
+        deductBalance(amount);
+      }
+      navigation.navigate('Success', {
+        success: result.success,
+        message: result.message,
+      });
+    } finally {
+      setLoading(false);
     }
-    navigation.navigate('Success', {
-      success: result.success,
-      message: result.message,
-    });
   };
 
   return (
@@ -44,15 +52,22 @@ const ConfirmScreen = () => {
         <Text style={styles.label}>Amount:</Text>
         <Text style={styles.value} accessibilityLabel={`Amount to send: €${amount}`}>€{amount}</Text>
       </View>
-
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Confirm & Send"
-          onPress={handleSend}
-          color={isDark ? '#4f46e5' : '#4f46e5'}
-          accessibilityLabel="Confirm and send money"
-        />
-      </View>
+      <TouchableOpacity
+        onPress={handleSend}
+        disabled={loading}
+        accessibilityLabel="Confirm and send money"
+        accessibilityState={{ busy: loading }}
+        style={[styles.button, loading ? styles.buttonDisabled : null]}
+      >
+        {loading ? (
+          <>
+            <ActivityIndicator size="small" color="#fff" style={{ marginRight: 8 }} />
+            <Text style={styles.buttonText}>Sending...</Text>
+          </>
+        ) : (
+          <Text style={styles.buttonText}>Confirm & Send</Text>
+        )}
+      </TouchableOpacity>
     </View>
   );
 };
@@ -96,8 +111,20 @@ const getStyles = (isDark: boolean) =>
       color: isDark ? '#fff' : '#000',
       marginBottom: 16,
     },
-    buttonContainer: {
-      borderRadius: 8,
-      overflow: 'hidden',
+    button: {
+      flexDirection: 'row',
+      backgroundColor: '#4f46e5',
+      borderRadius: 12,
+      paddingVertical: 14,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    buttonDisabled: {
+      opacity: 0.7,
+    },
+    buttonText: {
+      color: '#fff',
+      fontSize: 18,
+      fontWeight: '600',
     },
   });
