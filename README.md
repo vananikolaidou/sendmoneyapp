@@ -1,5 +1,5 @@
 Welcome to **SendMoneyApp**, a simple mobile application built using **React Native** that allows users to log in, review balances, and send money to recipients. 
-This project was created as part of an assessment for **Natech**.
+This project was created as part of an assessment.
 
 ---
 
