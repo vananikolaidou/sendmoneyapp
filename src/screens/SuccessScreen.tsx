@@ -33,7 +33,7 @@ const SuccessScreen = ({ route, navigation }) => {
       <View style={styles.buttonContainer}>
         <Button
           title="Back to Home"
-          onPress={() => navigation.popToTop()}
+          onPress={() => navigation.navigate('Homepage')}
           color={isDark ? '#4f46e5' : '#4f46e5'}
           accessibilityLabel="Back to Home button"
         />
