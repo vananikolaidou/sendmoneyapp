@@ -37,7 +37,7 @@ const App = () => {
         hidden={false}
       />
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Homepage" screenOptions={{
+        <Stack.Navigator initialRouteName="Register" screenOptions={{
           headerStyle: {
             backgroundColor: '#4f46e5', 
           },
@@ -46,8 +46,8 @@ const App = () => {
             fontWeight: 'bold',
           },
         }}>
-          {/* <Stack.Screen name="Register" component={RegisterScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} /> */}
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Homepage" component={HomeScreen} />
           <Stack.Screen name="SendMoney" component={SendMoneyScreen} />
           <Stack.Screen name="Confirm" component={ConfirmScreen} />

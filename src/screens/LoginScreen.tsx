@@ -8,7 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../firebase/firebaseConfig'; // Adjust path as needed
+import { auth } from '../../firebase/firebaseConfig'; 
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.replace('Home'); // Redirect to home screen after login
+      navigation.replace('Homepage'); 
     } catch (error) {
       Alert.alert('Login Failed', error.message);
     }

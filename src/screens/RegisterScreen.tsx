@@ -19,7 +19,6 @@ const RegisterScreen = ({ navigation }) => {
       Alert.alert('Error', 'Email and password are required');
       return;
     }
-    console.log("egooooooo", auth);
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       Alert.alert('Success', 'Account created successfully!');
