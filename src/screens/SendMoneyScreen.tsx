@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,11 +6,12 @@ import {
   StyleSheet,
   useColorScheme,
   TextInput,
+  Animated,
+  Easing,
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import InputField from '../../components/InputField';
 import AmountSlider from '../../components/AmountSlider';
 import { useBalance } from '../../context/BalanceContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -38,7 +39,8 @@ const SendMoneyScreen = ({ navigation }) => {
   const colorScheme = useColorScheme();
   const { isDark } = useTheme();
   const styles = getStyles(isDark);
-
+  const [bannerMessage, setBannerMessage] = useState('');
+  const bannerOpacity = useRef(new Animated.Value(0)).current;
   const {
     control,
     handleSubmit,
@@ -64,12 +66,36 @@ const SendMoneyScreen = ({ navigation }) => {
     return value;
   };
 
-  const onSubmit = (data) => {
+  const showBanner = (msg: string) => {
+    setBannerMessage(msg);
+    Animated.sequence([
+      Animated.timing(bannerOpacity, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }),
+      Animated.delay(5000),
+      Animated.timing(bannerOpacity, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.in(Easing.ease),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const onValidSubmit = (data) => {
     if (data.amount > balance) {
-      alert('Insufficient balance');
+      showBanner('Insufficient balance');
       return;
     }
     navigation.navigate('Confirm', data);
+  };
+
+  const onInvalid = (formErrors) => {
+    const firstError = formErrors.recipient?.message || formErrors.amount?.message;
+    if (firstError) showBanner(firstError);
   };
 
   return (
@@ -117,20 +143,36 @@ const SendMoneyScreen = ({ navigation }) => {
           />
         )}
       />
-
-      {errors.recipient && <Text style={styles.errorText} accessibilityLiveRegion="polite"
-        accessible={true}>{errors.recipient.message}</Text>}
-      {errors.amount && <Text style={styles.errorText} accessibilityLiveRegion="polite"
-        accessible={true}>{errors.amount.message}</Text>}
-
       <View style={styles.buttonContainer}>
         <Button
           title="Next"
-          onPress={handleSubmit(onSubmit)}
+          onPress={handleSubmit(onValidSubmit, onInvalid)}
           color={isDark ? '#4f46e5' : '#4f46e5'}
           accessibilityLabel="Next"
         />
       </View>
+      <Animated.View
+        style={[
+          styles.banner,
+          {
+            opacity: bannerOpacity,
+            transform: [
+              {
+                translateY: bannerOpacity.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [50, 0],
+                }),
+              },
+            ],
+          },
+        ]}
+        accessibilityLiveRegion="polite"
+      >
+        <View style={styles.bannerContent}>
+          <Text style={styles.bannerIcon}>⚠️</Text>
+          <Text style={styles.bannerText}>{bannerMessage}</Text>
+        </View>
+      </Animated.View>
     </View>
   );
 };
@@ -162,9 +204,32 @@ const getStyles = (isDark: boolean) =>
       marginBottom: 16,
       backgroundColor: isDark ? '#2c2c2e' : '#fff',
     },
-    errorText: {
-      color: isDark ? '#a78bfa' : '#4f46e5',
-      marginBottom: 12,
+    banner: {
+      position: 'absolute',
+      bottom: 30,
+      left: 20,
+      right: 20,
+      backgroundColor: '#4f46e5',
+      padding: 12,
+      borderRadius: 8,
+      elevation: 5,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+    },
+    bannerContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    bannerIcon: {
+      fontSize: 18,
+      marginRight: 8,
+    },
+    bannerText: {
+      color: '#fff',
+      textAlign: 'center',
       fontWeight: '600',
     },
     buttonContainer: {
